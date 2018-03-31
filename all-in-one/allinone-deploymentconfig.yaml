@@ -46,6 +46,10 @@ spec:
           configMap:
             name: ttnctl-config
             defaultMode: 420
+        - name: ttnctl-cert
+          configMap:
+            name: ttnctl-cert
+            defaultMode: 420
       containers:
       - name: discovery
         args:
@@ -57,7 +61,7 @@ spec:
           value: xterm-256color
         - name: TTN_DISCOVERY_REDIS_ADDRESS
           value: redis:6379
-        image: ' '
+        image: 'ttn-openshift:latest'
         ports:
         - containerPort: 1900
         - containerPort: 8080
@@ -74,7 +78,7 @@ spec:
         env:
         - name: TERM
           value: xterm-256color
-        image: 'router:latest'
+        image: 'ttn-openshift:latest'
         ports:
         - containerPort: 1901
         resources: {}
@@ -92,7 +96,7 @@ spec:
           value: xterm-256color
         - name: TTN_NETWORKSERVER_REDIS_ADDRESS
           value: redis:6379
-        image: 'networkserver:latest'
+        image: 'ttn-openshift:latest'
         ports:
         - containerPort: 1903
         resources: {}
@@ -108,7 +112,7 @@ spec:
         env:
         - name: TERM
           value: xterm-256color
-        image: 'broker:latest'
+        image: 'ttn-openshift:latest'
         ports:
         - containerPort: 1902
         resources: {}
@@ -128,7 +132,7 @@ spec:
           value: broker-amq-mqtt:1883
         - name: TTN_HANDLER_REDIS_ADDRESS
           value: redis:6379
-        image: 'handler:latest'
+        image: 'ttn-openshift:latest'
         ports:
         - containerPort: 1904
         - containerPort: 8084
@@ -136,13 +140,6 @@ spec:
         volumeMounts:
           - mountPath: /root/.env/handler
             name: handler-config
-        workingDir: /root
-      - name: ttnctl
-        image: 'ttnctl:latest'
-        resources: {}
-        volumeMounts:
-          - mountPath: /opt/app-root
-            name: ttnctl-config
         workingDir: /root
       restartPolicy: Always
   test: false
@@ -152,41 +149,13 @@ spec:
       automatic: true
       containerNames:
       - discovery
-      from:
-        kind: ImageStreamTag
-        name: discovery:latest
-    type: ImageChange
-  - imageChangeParams:
-      automatic: true
-      containerNames:
       - router
-      from:
-        kind: ImageStreamTag
-        name: router:latest
-    type: ImageChange
-  - imageChangeParams:
-      automatic: true
-      containerNames:
       - networkserver
-      from:
-        kind: ImageStreamTag
-        name: networkserver:latest
-    type: ImageChange
-  - imageChangeParams:
-      automatic: true
-      containerNames:
       - broker
-      from:
-        kind: ImageStreamTag
-        name: broker:latest
-    type: ImageChange
-  - imageChangeParams:
-      automatic: true
-      containerNames:
       - handler
       from:
         kind: ImageStreamTag
-        name: handler:latest
+        name: ttn-openshift:latest
     type: ImageChange
   - imageChangeParams:
       automatic: true
