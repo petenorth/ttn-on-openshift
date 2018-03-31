@@ -1,0 +1,6 @@
+discovery-address: localhost:1900
+mqtt-address: broker-amq-mqtt:1883
+mqtt-username: ttn
+mqtt-password: ttn
+router-id: dev
+handler-id: dev

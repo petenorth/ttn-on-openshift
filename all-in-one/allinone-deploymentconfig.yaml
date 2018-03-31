@@ -1,0 +1,265 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --provider=openshift
+    kompose.version: 1.9.0 (093c756)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: ttn-allinone
+  name: ttn-allinone
+spec:
+  replicas: 1
+  selector:
+    io.kompose.service: discovery
+  strategy:
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: discovery
+    spec:
+      volumes:
+        - name: discovery-config
+          configMap:
+            name: discovery-config
+            defaultMode: 420 
+        - name: router-config
+          configMap:
+            name: router-config
+            defaultMode: 420
+        - name: networkserver-config
+          configMap:
+            name: networkserver-config
+            defaultMode: 420
+        - name: broker-config
+          configMap:
+            name: broker-config
+            defaultMode: 420
+        - name: handler-config
+          configMap:
+            name: handler-config
+            defaultMode: 420
+        - name: ttnctl-config
+          configMap:
+            name: ttnctl-config
+            defaultMode: 420
+      containers:
+      - name: discovery
+        args:
+        - discovery
+        - --config
+        - ./.env/discovery/dev.yml
+        env:
+        - name: TERM
+          value: xterm-256color
+        - name: TTN_DISCOVERY_REDIS_ADDRESS
+          value: redis:6379
+        image: ' '
+        ports:
+        - containerPort: 1900
+        - containerPort: 8080
+        resources: {}
+        volumeMounts:
+          - mountPath: /root/.env/discovery/dev.yml
+            subPath: dev.yml
+            name: discovery-config
+          - mountPath: /root/.env/discovery/server.cert
+            subPath: server.cert
+            name: discovery-config
+          - mountPath: /root/.env/discovery/server.key
+            subPath: server.key
+            name: discovery-config
+          - mountPath: /root/.env/discovery/server.pub
+            subPath: server.pub
+            name: discovery-config
+        workingDir: /root
+      - name: router
+        args:
+        - router
+        - --config
+        - ./.env/router/dev.yml
+        env:
+        - name: TERM
+          value: xterm-256color
+        image: 'router:latest'
+        ports:
+        - containerPort: 1901
+        resources: {}
+        volumeMounts:
+          - mountPath: /root/.env/router/dev.yml
+            subPath: dev.yml
+            name: router-config
+          - mountPath: /root/.env/router/server.cert
+            subPath: server.cert
+            name: router-config
+          - mountPath: /root/.env/router/server.key
+            subPath: server.key
+            name: router-config
+          - mountPath: /root/.env/router/server.pub
+            subPath: server.pub
+            name: router-config
+          - mountPath: /root/.env/router/ca.cert
+            subPath: ca.cert
+            name: router-config
+        workingDir: /root
+      - name: networkserver
+        args:
+        - networkserver
+        - --config
+        - ./.env/networkserver/dev.yml
+        env:
+        - name: TERM
+          value: xterm-256color
+        - name: TTN_NETWORKSERVER_REDIS_ADDRESS
+          value: redis:6379
+        image: 'networkserver:latest'
+        ports:
+        - containerPort: 1903
+        resources: {}
+        volumeMounts:
+          - mountPath: /root/.env/networkserver/dev.yml
+            subPath: dev.yml
+            name: networkserver-config
+          - mountPath: /root/.env/networkserver/server.cert
+            subPath: server.cert
+            name: networkserver-config
+          - mountPath: /root/.env/networkserver/server.key
+            subPath: server.key
+            name: networkserver-config
+          - mountPath: /root/.env/networkserver/server.pub
+            subPath: server.pub
+            name: networkserver-config
+        workingDir: /root
+      - name: broker
+        args:
+        - broker
+        - --config
+        - ./.env/broker/dev.yml
+        env:
+        - name: TERM
+          value: xterm-256color
+        image: 'broker:latest'
+        ports:
+        - containerPort: 1902
+        resources: {}
+        volumeMounts:
+          - mountPath: /root/.env/broker/dev.yml
+            subPath: dev.yml
+            name: broker-config
+          - mountPath: /root/.env/broker/server.cert
+            subPath: server.cert
+            name: broker-config
+          - mountPath: /root/.env/broker/server.key
+            subPath: server.key
+            name: broker-config
+          - mountPath: /root/.env/broker/server.pub
+            subPath: server.pub
+            name: broker-config
+          - mountPath: /root/.env/broker/ca.cert
+            subPath: ca.cert
+            name: broker-config
+          - mountPath: /root/.env/broker/networkserver.cert
+            subPath: networkserver.cert
+            name: broker-config
+        workingDir: /root
+      - name: handler
+        args:
+        - handler
+        - --config
+        - ./.env/handler/dev.yml
+        env:
+        - name: TERM
+          value: xterm-256color
+        - name: TTN_HANDLER_MQTT_ADDRESS
+          value: broker-amq-mqtt:1883
+        - name: TTN_HANDLER_REDIS_ADDRESS
+          value: redis:6379
+        image: 'handler:latest'
+        ports:
+        - containerPort: 1904
+        - containerPort: 8084
+        resources: {}
+        volumeMounts:
+          - mountPath: /root/.env/handler/dev.yml
+            subPath: dev.yml
+            name: handler-config
+          - mountPath: /root/.env/handler/server.cert
+            subPath: server.cert
+            name: handler-config
+          - mountPath: /root/.env/handler/server.key
+            subPath: server.key
+            name: handler-config
+          - mountPath: /root/.env/handler/server.pub
+            subPath: server.pub
+            name: handler-config
+          - mountPath: /root/.env/handler/ca.cert
+            subPath: ca.cert
+            name: handler-config
+        workingDir: /root
+      - name: ttnctl
+        image: 'ttnctl:latest'
+        resources: {}
+        volumeMounts:
+          - mountPath: /opt/app-root/.ttnctl.yml
+            subPath: .ttnctl.yml
+            name: ttnctl-config
+          - mountPath: /opt/app-root/.ttnctl/ca.cert
+            subPath: ca.cert
+            name: ttnctl-config
+        workingDir: /root
+      restartPolicy: Always
+  test: false
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - discovery
+      from:
+        kind: ImageStreamTag
+        name: discovery:latest
+    type: ImageChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - router
+      from:
+        kind: ImageStreamTag
+        name: router:latest
+    type: ImageChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - networkserver
+      from:
+        kind: ImageStreamTag
+        name: networkserver:latest
+    type: ImageChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - broker
+      from:
+        kind: ImageStreamTag
+        name: broker:latest
+    type: ImageChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - handler
+      from:
+        kind: ImageStreamTag
+        name: handler:latest
+    type: ImageChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - ttnctl
+      from:
+        kind: ImageStreamTag
+        name: ttnctl:latest
+    type: ImageChange
+status: {}
