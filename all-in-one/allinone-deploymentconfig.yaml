@@ -63,17 +63,7 @@ spec:
         - containerPort: 8080
         resources: {}
         volumeMounts:
-          - mountPath: /root/.env/discovery/dev.yml
-            subPath: dev.yml
-            name: discovery-config
-          - mountPath: /root/.env/discovery/server.cert
-            subPath: server.cert
-            name: discovery-config
-          - mountPath: /root/.env/discovery/server.key
-            subPath: server.key
-            name: discovery-config
-          - mountPath: /root/.env/discovery/server.pub
-            subPath: server.pub
+          - mountPath: /root/.env/discovery
             name: discovery-config
         workingDir: /root
       - name: router
@@ -89,20 +79,7 @@ spec:
         - containerPort: 1901
         resources: {}
         volumeMounts:
-          - mountPath: /root/.env/router/dev.yml
-            subPath: dev.yml
-            name: router-config
-          - mountPath: /root/.env/router/server.cert
-            subPath: server.cert
-            name: router-config
-          - mountPath: /root/.env/router/server.key
-            subPath: server.key
-            name: router-config
-          - mountPath: /root/.env/router/server.pub
-            subPath: server.pub
-            name: router-config
-          - mountPath: /root/.env/router/ca.cert
-            subPath: ca.cert
+          - mountPath: /root/.env/router
             name: router-config
         workingDir: /root
       - name: networkserver
@@ -120,17 +97,7 @@ spec:
         - containerPort: 1903
         resources: {}
         volumeMounts:
-          - mountPath: /root/.env/networkserver/dev.yml
-            subPath: dev.yml
-            name: networkserver-config
-          - mountPath: /root/.env/networkserver/server.cert
-            subPath: server.cert
-            name: networkserver-config
-          - mountPath: /root/.env/networkserver/server.key
-            subPath: server.key
-            name: networkserver-config
-          - mountPath: /root/.env/networkserver/server.pub
-            subPath: server.pub
+          - mountPath: /root/.env/networkserver
             name: networkserver-config
         workingDir: /root
       - name: broker
@@ -146,23 +113,7 @@ spec:
         - containerPort: 1902
         resources: {}
         volumeMounts:
-          - mountPath: /root/.env/broker/dev.yml
-            subPath: dev.yml
-            name: broker-config
-          - mountPath: /root/.env/broker/server.cert
-            subPath: server.cert
-            name: broker-config
-          - mountPath: /root/.env/broker/server.key
-            subPath: server.key
-            name: broker-config
-          - mountPath: /root/.env/broker/server.pub
-            subPath: server.pub
-            name: broker-config
-          - mountPath: /root/.env/broker/ca.cert
-            subPath: ca.cert
-            name: broker-config
-          - mountPath: /root/.env/broker/networkserver.cert
-            subPath: networkserver.cert
+          - mountPath: /root/.env/broker
             name: broker-config
         workingDir: /root
       - name: handler
@@ -183,31 +134,14 @@ spec:
         - containerPort: 8084
         resources: {}
         volumeMounts:
-          - mountPath: /root/.env/handler/dev.yml
-            subPath: dev.yml
-            name: handler-config
-          - mountPath: /root/.env/handler/server.cert
-            subPath: server.cert
-            name: handler-config
-          - mountPath: /root/.env/handler/server.key
-            subPath: server.key
-            name: handler-config
-          - mountPath: /root/.env/handler/server.pub
-            subPath: server.pub
-            name: handler-config
-          - mountPath: /root/.env/handler/ca.cert
-            subPath: ca.cert
+          - mountPath: /root/.env/handler
             name: handler-config
         workingDir: /root
       - name: ttnctl
         image: 'ttnctl:latest'
         resources: {}
         volumeMounts:
-          - mountPath: /opt/app-root/.ttnctl.yml
-            subPath: .ttnctl.yml
-            name: ttnctl-config
-          - mountPath: /opt/app-root/.ttnctl/ca.cert
-            subPath: ca.cert
+          - mountPath: /opt/app-root
             name: ttnctl-config
         workingDir: /root
       restartPolicy: Always
@@ -262,4 +196,4 @@ spec:
         kind: ImageStreamTag
         name: ttnctl:latest
     type: ImageChange
-status: {}
+status: {}:
