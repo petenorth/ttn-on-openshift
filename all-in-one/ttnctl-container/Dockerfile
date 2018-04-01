@@ -8,9 +8,9 @@ RUN unzip ttnctl-linux-amd64.zip
 RUN chmod +x ttnctl-linux-amd64
 RUN cp ttnctl-linux-amd64 /usr/local/bin/ttnctl
 
-RUN mkdir /opt/app-root/.ttnctl
-RUN chgrp -R 0 /opt/app-root/.ttnctl && \
-    chmod -R g=u /opt/app-root/.ttnctl
+RUN mkdir /opt/app-root/data_ttnctl
+RUN chgrp -R 0 /opt/app-root/data_ttnctl && \
+    chmod -R g=u /opt/app-root/data_ttnctl
 
 USER 10001
 

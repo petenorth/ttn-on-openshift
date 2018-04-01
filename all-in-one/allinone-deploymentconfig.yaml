@@ -153,6 +153,8 @@ spec:
             value: dev
           - name: TTNCTL_HANDLER_ID
             value: dev
+          - name: TTNCTL_DATA
+            value: data_ttnctl
         volumeMounts:
           - mountPath: /opt/app-root/.ttnctl
             name: ttnctl-cert
