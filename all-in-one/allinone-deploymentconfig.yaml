@@ -42,10 +42,6 @@ spec:
           configMap:
             name: handler-config
             defaultMode: 420
-        - name: ttnctl-config
-          configMap:
-            name: ttnctl-config
-            defaultMode: 420
         - name: ttnctl-cert
           configMap:
             name: ttnctl-cert
@@ -141,6 +137,25 @@ spec:
           - mountPath: /root/.env/handler
             name: handler-config
         workingDir: /root
+      - name: ttnctl
+        image: 'ttnctl:latest'
+        resources: {}
+        env:
+          - name: TTNCTL_DISCOVERY_ADDRESS
+            value: 'localhost:1900'
+          - name: TTNCTL_MQTT_ADDRESS
+            value: 'broker-amq-mqtt:1883'
+          - name: TTNCTL_MQTT_USERNAME
+            value: ttn
+          - name: TTNCTL_MQTT_PASSWORD
+            value: ttn
+          - name: TTNCTL_ROUTER_ID
+            value: dev
+          - name: TTNCTL_HANDLER_ID
+            value: dev
+        volumeMounts:
+          - mountPath: /opt/app-root/.ttnctl
+            name: ttnctl-cert
       restartPolicy: Always
   test: false
   triggers:
